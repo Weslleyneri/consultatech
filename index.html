@@ -279,12 +279,13 @@
       infoDiv.style.display = "block";
     }
 
-    function copiarInfo() {
-      const texto = document.getElementById("textoInfo").innerText;
-      navigator.clipboard.writeText(texto).then(() => {
-        alert("Informação copiada com sucesso!");
-      });
-    }
+function copiarInfo() {
+  const texto = document.getElementById("textoInfo").value;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert("Informação copiada com sucesso!");
+  });
+}
+
   </script>
 </body>
 </html>

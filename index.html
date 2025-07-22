@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Portal Técnico - Consulta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #fff;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 4px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1em;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    select option {
+      color: black;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #00aaff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #008fcc;
+    }
+
+    #dataHora {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+
+    #infoProgramacao {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      display: none;
+      position: relative;
+    }
+
+    #infoProgramacao a {
+      display: block;
+      margin-top: 10px;
+      color: #00aaff;
+      text-align: center;
+      text-decoration: underline;
+    }
+
+.copy-button {
+      position: relative;
+      display: block;
+      margin: 0 auto 10px auto;
+      background-color: #00aaff;
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      text-align: center;
+    }
+
+    .copy-button:hover {
+      background-color: #008fcc;
+    }
+
+    textarea.preview {
+      width: 95%;
+      height: 100px;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      resize: none;
+      background-color: rgba(255,255,255,0.1);
+      color: white;
+      font-family: inherit;
+      font-size: 0.95em;
+      border: none;
+    }
+
+    @media screen and (max-width: 500px) {
+      .container {
+        padding: 20px;
+      }
+
+      .copy-button {
+        top: 10px;
+        right: 10px;
+        padding: 8px 14px;
+        font-size: 0.85em;
+      }
+    }
+  </style>
+</head>
+<body onload="iniciarRelogio()">
+  <div class="container">
+    <h2>Consulta de Programação</h2>
+
+    <label for="base">Base de Atendimento:</label>
+    <select id="base" onchange="atualizarTecnicos()">
+      <option value="">Selecione a base</option>
+      <option value="Sorocaba">Sorocaba</option>
+      <option value="Campinas">Campinas</option>
+      <option value="Jáu">Jáu</option>
+      <option value="Presidente Prudente">Presidente Prudente</option>
+      <option value="Bauru">Bauru</option>
+      <option value="Marília">Marília</option>
+      <option value="Araçatuba">Araçatuba</option>
+    </select>
+
+    <label for="tecnico">Técnico:</label>
+    <select id="tecnico">
+      <option value="">Selecione o técnico</option>
+    </select>
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" placeholder="Digite sua senha" />
+
+    <div id="dataHora">Data/Hora atual:</div>
+
+    <button onclick="consultarInfo()">Consultar Programação</button>
+
+    <div id="infoProgramacao"></div>
+  </div>
+
+  <script>
+ const tecnicosPorBase = {
+    Sorocaba: [
+      "Luis Augusto Fernandes Da Silva", "Leone Henrique Da Silva Santos",
+      "Stefany Dias Rossi", "Everson Da Silva Soares", "Vagner De Souza Barbosa",
+      "Wilson Soares Dos Santos", "Diego Veronese Paschoalato", "Clovis Ouchar Júnior",
+      "Gabriel Amorim Fogaça De Sousa", "Heleno Meira Dos Santos", "Ian Garcia Da Costa",
+      "Márcio Santos Santana", "Rafael De Lima Santana", "Renato Nascimento Santos"
+    ],
+    Campinas: [
+      "Vinicius Dacio Da Silva", "Saulo Emmanuel Dos Santos Brito",
+      "Ricardo Rocha De Souza", "Paulo Henrique Santana De Melo", "Matheus Nielsen Ferraz",
+      "Mateus Vinicius Rodrigues Batista", "Helder Silva Sampaio", "Gabriel Leonardo Oliveira Ozorio",
+      "Filipi De Almeida Mamoni", "Bruno Rafael Nascimento Gonçalves", "Alexandre Matias Carvalho Lima",
+      "Alefe Guímel Vieira De Lacerda", "Marcus Pablo Gongora"
+    ],
+    "Jáu": ["Ronaldo Cespedes"],
+    "Presidente Prudente": ["Thomaz Eder De Souza", "Eriton Oliveira Pinto Da Silva"],
+    "Bauru": ["Vinicius Mucio", "João Paulo Da Silva Rafael"],
+    "Marília": ["Euller Dos Santos Batista", "Wellington Tranquitella De Melo"],
+    "Araçatuba": ["Ademir Borges De Souza Junior"]
+  };
+
+  const credenciais = {
+    "Luis Augusto Fernandes Da Silva": { senha: "465", info: "60006045899,60006036017, 60006046198, 60006049974", link: "https://getcircuit.page.link/Vme8NvWUmRcyey1n8" },
+    "Leone Henrique Da Silva Santos": { senha: "448", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Stefany Dias Rossi": { senha: "410", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Everson Da Silva Soares": { senha: "308", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Vagner De Souza Barbosa": { senha: "367", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Wilson Soares Dos Santos": { senha: "312", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Diego Veronese Paschoalato": { senha: "222", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Clovis Ouchar Júnior": { senha: "336", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Gabriel Amorim Fogaça De Sousa": { senha: "420", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Heleno Meira Dos Santos": { senha: "268", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Ian Garcia Da Costa": { senha: "477", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Márcio Santos Santana": { senha: "946", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Rafael De Lima Santana": { senha: "462", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Renato Nascimento Santos": { senha: "351", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+
+    "Vinicius Dacio Da Silva": { senha: "525", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Saulo Emmanuel Dos Santos Brito": { senha: "215", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Ricardo Rocha De Souza": { senha: "227", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Paulo Henrique Santana De Melo": { senha: "991", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Matheus Nielsen Ferraz": { senha: "477", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Mateus Vinicius Rodrigues Batista": { senha: "055", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Helder Silva Sampaio": { senha: "431", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Gabriel Leonardo Oliveira Ozorio": { senha: "488", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Filipi De Almeida Mamoni": { senha: "494", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Bruno Rafael Nascimento Gonçalves": { senha: "991", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Alexandre Matias Carvalho Lima": { senha: "152", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Alefe Guímel Vieira De Lacerda": { senha: "055", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Marcus Pablo Gongora": { senha: "215", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+
+    "Ronaldo Cespedes": { senha: "334", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Thomaz Eder De Souza": { senha: "381", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Eriton Oliveira Pinto Da Silva": { senha: "293", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Vinicius Mucio": { senha: "381", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "João Paulo Da Silva Rafael": { senha: "395", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Euller Dos Santos Batista": { senha: "418", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Wellington Tranquitella De Melo": { senha: "275", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+    "Ademir Borges De Souza Junior": { senha: "340", info: "SEM PROGRAMAÇÃO", link: "SEM LINK DE ROTA CIRCUIT" },
+  };
+
+    function atualizarTecnicos() {
+      const base = document.getElementById("base").value;
+      const tecnicoSelect = document.getElementById("tecnico");
+      tecnicoSelect.innerHTML = '<option value="">Selecione o técnico</option>';
+      if (tecnicosPorBase[base]) {
+        tecnicosPorBase[base].forEach(tecnico => {
+          const opt = document.createElement("option");
+          opt.value = tecnico;
+          opt.textContent = tecnico;
+          tecnicoSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function iniciarRelogio() {
+      setInterval(() => {
+        const d = new Date();
+        document.getElementById("dataHora").innerText =
+          `Data/Hora atual: ${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+      }, 1000);
+    }
+
+    function consultarInfo() {
+      const tecnico = document.getElementById("tecnico").value;
+      const senha = document.getElementById("senha").value;
+
+      if (!tecnico) return alert("Selecione o técnico.");
+      if (!credenciais[tecnico]) return alert("Técnico não configurado.");
+      if (senha !== credenciais[tecnico].senha) return alert("Senha incorreta.");
+
+      const info = credenciais[tecnico].info;
+      const link = credenciais[tecnico].link;
+
+      const infoDiv = document.getElementById("infoProgramacao");
+ infoDiv.innerHTML = `
+  <button class="copy-button" onclick="copiarInfo()">Copiar</button>
+  <textarea class="preview" id="textoInfo" readonly>${info}</textarea>
+  <a href="${link}" target="_blank">Abrir Rota no Circuit</a>
+`;
+
+      infoDiv.style.display = "block";
+    }
+
+    function copiarInfo() {
+      const texto = document.getElementById("textoInfo").innerText;
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Informação copiada com sucesso!");
+      });
+    }
+  </script>
+</body>
+</html>
